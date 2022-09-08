@@ -67,26 +67,16 @@ function App() {
       {MovieInfo === undefined? (
         <div></div>
       ) : MovieInfo.Response === "False" ? (
-      <div
-          id="movie-result"
-          style={{
-            maxWidth: "80%",
-            margin: "0 auto",
-            padding: "100px 10px 0px 10px",
-          }}
-        >
+      <div>
           <Paper sx={{ backgroundColor: "#E0FFFF" }}>
             <Grid
               container
               direction="row"
-              spacing={5}
-              sx={{
-                justifyContent: "center",
-              }}
-          >
+              spacing={0}
+              sx={{justifyContent: "center",}}>
               <Grid item>
                 <Box>
-                  <h1>movie not found</h1>
+                <h1>Moive not found</h1>
                   <Skeleton width={300} height={300} />
                 </Box>
               </Grid>    
@@ -100,7 +90,7 @@ function App() {
               style={{
                 maxWidth: "80%",
                 margin: "0 auto",
-                padding: "100px 10px 0px 10px",
+                padding: "2.5vw 2.5vw 2.5vw 2.5vw",
               }}
             >
               <Paper sx={{ backgroundColor: "#030303" }}>
@@ -160,6 +150,7 @@ function App() {
     axios
     .get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +page).then((res) => {
       setMovieInfo(res.data);
+      console.log(MovieInfo);
     });
   } 
 
