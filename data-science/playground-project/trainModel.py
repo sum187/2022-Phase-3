@@ -31,8 +31,10 @@ if __name__ == "__main__":
     from datetime import datetime
     import pandas as pd
     from sklearn.model_selection import train_test_split
+    import os
 
-    log_dir = "output/logs/" + datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    current_time=datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    log_dir=".\\output\\logs\\"
 
     data = pd.read_csv("output/game_data.csv")
     model = generateModel()
@@ -56,7 +58,7 @@ if __name__ == "__main__":
 
     model.fit(train_x, train_y,
         validation_data=(test_x, test_y),
-        epochs=50000,
+        epochs=1000,
         batch_size=2000,
         callbacks=[tensorboard_callback, earlystop_callback],
         # verbose=0 # Uncomment this line to reduce the printing on console.
