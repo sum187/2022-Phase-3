@@ -21,23 +21,11 @@ function App() {
     setSearchResult([name,page]);
   };
 
-  /*useEffect(() => {
-   
-    checkMovieName(name,page);
-    console.log(name,page);
-  
-  });*/
-
-
   useEffect(() => {
-   
-    checkMovieName(name,page);
-    console.log(name,page);
-  
+    setTimeout(()=>{
+      checkMovieName(name,page);
+    },300);  
   },[searchResult]);
-  /*setSearchResult([name,page])*/
-  /*console.log(name,page)*/
-
 
   const Movie_BASE_URL = "https://www.omdbapi.com";
   const key = "8059c2e4";
