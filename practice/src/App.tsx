@@ -67,23 +67,13 @@ function App() {
       {MovieInfo === undefined? (
         <div></div>
       ) : MovieInfo.Response === "False" ? (
-      <div
-          id="movie-result"
-          style={{
-            maxWidth: "80%",
-            margin: "0 auto",
-            padding: "100px 10px 0px 10px",
-          }}
-        >
+      <div>
           <Paper sx={{ backgroundColor: "#E0FFFF" }}>
             <Grid
               container
               direction="row"
-              spacing={5}
-              sx={{
-                justifyContent: "center",
-              }}
-          >
+              spacing={0}
+              sx={{justifyContent: "center",}}>
               <Grid item>
                 <Box>
                   <h1>movie not found</h1>
