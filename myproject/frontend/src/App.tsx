@@ -39,7 +39,7 @@ function App() {
   /*console.log(name,page)*/
 
 
-  const Movie_BASE_URL = "http://www.omdbapi.com";
+  const Movie_BASE_URL = "https://www.omdbapi.com";
   const key = "8059c2e4";
   const noImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"
 
@@ -193,7 +193,6 @@ function App() {
       .then((res) => {
         setMovieInfo(res.data);
       })
-      console.log(name,page);
     }}
 }
 
