@@ -2,13 +2,12 @@ import axios from "axios";
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import './App.css';
-import { Box, Button, Grid, Paper, Skeleton,ImageList,ImageListItem,ImageListItemBar,
-  TextField} from "@mui/material";
+import { Box, Button, Grid, Paper, Skeleton,ImageList,ImageListItem,ImageListItemBar,TextField} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
-/* eslint-disable no-unused-expressions */
+
 
 function App() {
   const [movieName, setMovieName] = useState<undefined | any>(undefined);
@@ -18,24 +17,34 @@ function App() {
   const [searchResult, setSearchResult] = useState<undefined | any>(undefined);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    setSearchResult([name,page]);
+    setSearchResult(page);
   };
 
-  useEffect(() => {
-    setTimeout(()=>{
-      checkMovieName(name,page);
-    },300);  
-  },[searchResult]);
-
+  // url and key 
   const Movie_BASE_URL = "https://www.omdbapi.com";
   const key = "8059c2e4";
   const noImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"
+
+  //keep track of screen size
+  const [windowSize, setWindowSize] = useState(getWindowSize());
+  useEffect(() => {
+    function handleWindowResize() {
+      setWindowSize(getWindowSize());
+    }
+    console.log(getColumn(windowSize.innerWidth));
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, []);
+
 
   return (
     <div>
       <div className="search-field">
         <h1>Movie Search</h1 >
         <div style={{ display: "flex", justifyContent: "center" }}>
+
           <TextField
             id="search-bar"
             className="text"
@@ -48,15 +57,21 @@ function App() {
             placeholder="Search..."
             size="medium"
           />
+         
           <Button
             onClick={() => {
-              {movieName===undefined? (/* eslint-disable-line */
+              // movie name not entered
+              if (movieName===undefined){ 
                 setName(undefined)
-              ) : (
-                search('1'),
+              // new movie name is searched
+              } else if (movieName!==name) {
+                search(),
                 setPage(1),
                 setName(movieName)
-              )}
+              // same movie name is searched but not at page 1
+              } else if (movieName===name&&page!==1){
+                setPage(1)
+              }
             }}
           >
             <SearchIcon style={{ fill: "blue" }} />
@@ -94,8 +109,8 @@ function App() {
               }}
             >
               <Paper sx={{ backgroundColor: "#030303" }}>
-                <ImageList variant="standard" cols={5} gap={12}>
-                  {MovieInfo.Search.map((search: any) => (       
+                <ImageList variant="standard" cols={getColumn(windowSize.innerWidth)} gap={12}>
+                  {MovieInfo.Search.slice(30*(page-1),30*page).map((search:any) => (       
                     <ImageListItem >
                       <img
                         src={`${validLink(search.Poster)}?w=248&fit=crop&auto=format`}
@@ -130,7 +145,7 @@ function App() {
                     <Stack spacing={2}>
                       <Typography>Page: {page}</Typography>
                       <Pagination count={
-                        Math.ceil(parseInt(MovieInfo.totalResults)/10)} 
+                        Math.ceil(parseInt(MovieInfo.totalResults)/30)} 
                         variant="outlined"
                         shape="rounded"
                         page={page} 
@@ -146,13 +161,33 @@ function App() {
     </div>
   );
 
-  function search(page: any){
-    axios
-    .get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +page).then((res) => {
-      setMovieInfo(res.data);
-      console.log(MovieInfo);
-    });
-  } 
+  
+  async function search() {
+    // get response for first time
+    const res = await axios.
+    get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +page); 
+    var value=0 
+
+    // loop to call multiple responses (each response has maximum of 10 search results)
+    for (let i = 1; i < Math.ceil(parseInt(res.data.totalResults)/10)+1; i++) {
+      // stopping criteria
+      var ongoing = true;
+      // get response
+      var response = await axios.
+        get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +i.toString());
+      // loop to combine responses
+      while (value<=res.data.totalResults-1&&ongoing){
+        res.data.Search[value]=response.data.Search[value%10]
+        value+=1;
+        // stop when all 10 search results are visited
+        if (value===i*10){
+          ongoing=false
+        }
+      }
+    }
+    console.log(res.data.Search.slice(0,10));
+    setMovieInfo(res.data);
+  }
 
   function validLink(value: any) {
     if ( value === "N/A") {
@@ -162,15 +197,23 @@ function App() {
     }
   }
 
-  function checkMovieName(value: any,page:any){
-    if (value === undefined) {
-      return;
-    } else {
-      axios
-      .get(Movie_BASE_URL + "/?s=" + value + "&apikey=" + key + "&type=movie&page=" +page)
-      .then((res) => {
-        setMovieInfo(res.data);
-      })
+  function getWindowSize() {
+    const {innerWidth, innerHeight} = window;
+    return {innerWidth, innerHeight};
+  }
+  
+  // get number of image in the column depending on screen size
+  function getColumn(width:any) {
+    if (width<320) {
+      return 1;
+    } else if (width>=320&&width<=480) {
+      return 2;
+    } else if (width>480&&width<=768) {
+      return 3;
+    } else if (width>=768&&width<=1024) {
+      return 5;
+    } else if (width>=1024) {
+      return 6;
     }}
 }
 
