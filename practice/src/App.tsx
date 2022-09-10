@@ -7,6 +7,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
+import * as ReactBootStrap from 'react-bootstrap'
 
 
 function App() {
@@ -22,21 +23,27 @@ function App() {
 
   // url and key 
   const Movie_BASE_URL = "https://www.omdbapi.com";
-  const key = "8059c2e4";
+  const key = "938b78ef";
   const noImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"
 
   //keep track of screen size
   const [windowSize, setWindowSize] = useState(getWindowSize());
+  const [col, setCol] = useState(getColumn(windowSize.innerWidth));
+
   useEffect(() => {
     function handleWindowResize() {
       setWindowSize(getWindowSize());
     }
-    console.log(getColumn(windowSize.innerWidth));
     window.addEventListener('resize', handleWindowResize);
     return () => {
       window.removeEventListener('resize', handleWindowResize);
+      setCol(getColumn(windowSize.innerWidth));
+      console.log(col);
     };
   }, []);
+  
+  // loading while waiting for the result
+  const [loading, setLoading] = useState(false);
 
 
   return (
@@ -60,11 +67,14 @@ function App() {
          
           <Button
             onClick={() => {
+              console.log(loading)
               // movie name not entered
               if (movieName===undefined){ 
                 setName(undefined)
               // new movie name is searched
               } else if (movieName!==name) {
+                console.log('loading'),
+                setLoading(true),
                 search(),
                 setPage(1),
                 setName(movieName)
@@ -99,11 +109,16 @@ function App() {
           </Paper> 
         </div> 
       ) : (
+        <div
+          className='App'
+          >
+          {loading ? <ReactBootStrap.Spinner animation="border" />: 
           <Paper sx={{ backgroundColor: "#191a1a" }}>
             <div
+              className='App'
               id="movie-result"
               style={{
-                maxWidth: "80%",
+                maxWidth: "85%",
                 margin: "0 auto",
                 padding: "2.5vw 2.5vw 2.5vw 2.5vw",
               }}
@@ -116,6 +131,8 @@ function App() {
                         src={`${validLink(search.Poster)}?w=248&fit=crop&auto=format`}
                         srcSet={`${validLink(search.Poster)}?w=248&fit=crop&auto=format&dpr=2 2x`}
                         alt={search.Title}
+                        style={{ width: imageSize(windowSize.innerWidth,'width'),
+                           height: imageSize(windowSize.innerWidth,'height')}}
                         loading="lazy"
                       />  
                       <ImageListItemBar 
@@ -157,6 +174,8 @@ function App() {
               </Grid>
             </div>
           </Paper>
+          }
+        </div>
       )}   
     </div>
   );
@@ -185,8 +204,9 @@ function App() {
         }
       }
     }
-    console.log(res.data.Search.slice(0,10));
     setMovieInfo(res.data);
+    console.log('finish')
+    setLoading(false)
   }
 
   function validLink(value: any) {
@@ -215,6 +235,16 @@ function App() {
     } else if (width>=1024) {
       return 6;
     }}
+
+  // get image size  
+  function imageSize(length:number,string:string) {
+    const col=getColumn(window.innerWidth)
+    if (col!==undefined&&string==='width'){
+      return length/col*0.7;
+    } else if (col!==undefined&&string==='height'){
+      return length/col*0.7*1.412
+    }
+  }
 }
 
 export default App;

@@ -2,41 +2,70 @@ import axios from "axios";
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import './App.css';
-import { Box, Button, Grid, Paper, Skeleton,ImageList,ImageListItem,ImageListItemBar,TextField} from "@mui/material";
+import { Box, Button, Grid, Paper, Skeleton,ImageList,ImageListItem,ImageListItemBar,TextField,Typography} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { Typography } from '@mui/material';
+import Demo from './loading';
+import { StyledEngineProvider } from '@mui/material/styles';
+
+
 
 
 function App() {
-  const [movieName, setMovieName] = useState<undefined | any>(undefined);
-  const [name, setName] = useState<undefined | any>(undefined);
+  const [movieName, setMovieName] = useState<undefined | any>('');
+  const [name, setName] = useState<undefined | any>('');
   const [MovieInfo, setMovieInfo] = useState<undefined | any>(undefined);
   const [page, setPage] = React.useState(1);
-  const [searchResult, setSearchResult] = useState<undefined | any>(undefined);
+  const [pageResult, setSearchResult] = useState(1);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    setSearchResult(page);
+    setSearchResult(value);
   };
 
   // url and key 
   const Movie_BASE_URL = "https://www.omdbapi.com";
-  const key = "8059c2e4";
+  //const key = "938b78ef";
+  //const key = "8059c2e4";
+  const key = "52776e8"
   const noImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"
 
   //keep track of screen size
   const [windowSize, setWindowSize] = useState(getWindowSize());
+  const [col, setCol] = useState(getColumn(windowSize.innerWidth));
   useEffect(() => {
     function handleWindowResize() {
       setWindowSize(getWindowSize());
     }
-    console.log(getColumn(windowSize.innerWidth));
     window.addEventListener('resize', handleWindowResize);
     return () => {
       window.removeEventListener('resize', handleWindowResize);
+      setCol(getColumn(windowSize.innerWidth));
     };
   }, []);
+
+  // keep track of select page
+  useEffect(() => {
+    search(page)
+  }, [pageResult]);
+
+  
+  // loading while waiting for the result
+  const [loading, setLoading] = useState(false);
+  
+
+  
+
+
+
+  /*return(
+    <React.StrictMode>
+      <StyledEngineProvider injectFirst>
+        <Demo />
+      </StyledEngineProvider>
+    </React.StrictMode>
+  )*/
+
 
 
   return (
@@ -61,16 +90,17 @@ function App() {
           <Button
             onClick={() => {
               // movie name not entered
-              if (movieName===undefined){ 
-                setName(undefined)
+              if (movieName===''){ 
+                setName('')
               // new movie name is searched
               } else if (movieName!==name) {
-                search(),
+                search(page),
                 setPage(1),
                 setName(movieName)
               // same movie name is searched but not at page 1
               } else if (movieName===name&&page!==1){
                 setPage(1)
+                search(1)
               }
             }}
           >
@@ -81,7 +111,7 @@ function App() {
       </div>
       {MovieInfo === undefined? (
         <div></div>
-      ) : MovieInfo.Response === "False" ? (
+      ) : (MovieInfo.Response === "False") && (name!=='') ? (
       <div>
           <Paper sx={{ backgroundColor: "#E0FFFF" }}>
             <Grid
@@ -98,24 +128,33 @@ function App() {
             </Grid>
           </Paper> 
         </div> 
-      ) : (
+      ) : MovieInfo.Response === "True"? (
+        <div className='App'>
+          {loading ? <React.StrictMode>
+                      <StyledEngineProvider injectFirst>
+                        <Demo />
+                      </StyledEngineProvider>
+                    </React.StrictMode>: 
           <Paper sx={{ backgroundColor: "#191a1a" }}>
             <div
+              className='App'
               id="movie-result"
               style={{
-                maxWidth: "80%",
+                maxWidth: "85%",
                 margin: "0 auto",
                 padding: "2.5vw 2.5vw 2.5vw 2.5vw",
               }}
             >
               <Paper sx={{ backgroundColor: "#030303" }}>
                 <ImageList variant="standard" cols={getColumn(windowSize.innerWidth)} gap={12}>
-                  {MovieInfo.Search.slice(30*(page-1),30*page).map((search:any) => (       
+                  {MovieInfo.Search.map((search:any) => (       
                     <ImageListItem >
                       <img
                         src={`${validLink(search.Poster)}?w=248&fit=crop&auto=format`}
                         srcSet={`${validLink(search.Poster)}?w=248&fit=crop&auto=format&dpr=2 2x`}
                         alt={search.Title}
+                        style={{ width: imageSize(windowSize.innerWidth,'width'),
+                           height: imageSize(windowSize.innerWidth,'height')}}
                         loading="lazy"
                       />  
                       <ImageListItemBar 
@@ -157,38 +196,63 @@ function App() {
               </Grid>
             </div>
           </Paper>
+          }
+        </div>
+      ):(
+        <div></div>
       )}   
     </div>
   );
 
   
-  async function search() {
+  async function search(page:any) {
+    setLoading(true)
+    console.log(name)
+    console.log(movieName)
+    console.log(MovieInfo)
+    console.log(page)
+    console.log(pageResult)
+    console.log('loading')
     // get response for first time
     const res = await axios.
     get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +page); 
+    
+    if (movieName===''){
+
+    // check response 
+    } else if (res.data.Response!=='True'){
+      console.log('there was no search');
+      setMovieInfo(res.data);
+    } else {
     var value=0 
 
+    // making sure page number is not exceed
+    const maxPage=Math.ceil(res.data.totalResults/10)
+    var endPage=page*3
+    if (endPage>maxPage){
+      endPage=maxPage
+    }
+
     // loop to call multiple responses (each response has maximum of 10 search results)
-    for (let i = 1; i < Math.ceil(parseInt(res.data.totalResults)/10)+1; i++) {
-      // stopping criteria
-      var ongoing = true;
-      // get response
-      var response = await axios.
-        get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +i.toString());
-      // loop to combine responses
-      while (value<=res.data.totalResults-1&&ongoing){
-        res.data.Search[value]=response.data.Search[value%10]
-        value+=1;
-        // stop when all 10 search results are visited
-        if (value===i*10){
-          ongoing=false
+      for (let i = page*3-2; i < endPage+1; i++) {
+
+        // get response
+        var response = await axios.
+          get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +i.toString());
+
+        // loop to combine responses
+        for (let j=0; j<response.data.Search.length;j++){
+          res.data.Search[value]=response.data.Search[j]
+          value+=1;
         }
       }
+      setMovieInfo(res.data);
     }
-    console.log(res.data.Search.slice(0,10));
-    setMovieInfo(res.data);
-  }
-
+    console.log('finish')
+    setLoading(false)
+}  
+  
+  // if invalid get image that says 'no image'
   function validLink(value: any) {
     if ( value === "N/A") {
       return noImage;
@@ -215,6 +279,16 @@ function App() {
     } else if (width>=1024) {
       return 6;
     }}
+
+  // get image size  
+  function imageSize(length:number,string:string) {
+    const col=getColumn(window.innerWidth)
+    if (col!==undefined&&string==='width'){
+      return length/col*0.7;
+    } else if (col!==undefined&&string==='height'){
+      return length/col*0.7*1.412
+    }
+  }
 }
 
 export default App;
