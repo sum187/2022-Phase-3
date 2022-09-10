@@ -10,12 +10,9 @@ import Stack from '@mui/material/Stack';
 import Demo from './loading';
 import { StyledEngineProvider } from '@mui/material/styles';
 
-
-
-
 function App() {
-  const [movieName, setMovieName] = useState<undefined | any>('');
-  const [name, setName] = useState<undefined | any>('');
+  const [movieName, setMovieName] = useState<undefined | any>(undefined);
+  const [name, setName] = useState<undefined | any>(undefined);
   const [MovieInfo, setMovieInfo] = useState<undefined | any>(undefined);
   const [page, setPage] = React.useState(1);
   const [pageResult, setSearchResult] = useState(1);
