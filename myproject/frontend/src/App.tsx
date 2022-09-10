@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import './App.css';
+import './imagecolumn';
 import { Box, Button, Grid, Paper, Skeleton,ImageList,ImageListItem,ImageListItemBar,TextField,Typography} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Pagination from '@mui/material/Pagination';
@@ -49,25 +50,10 @@ function App() {
     search(page)
   }, [pageResult]);
 
-  
+
   // loading while waiting for the result
   const [loading, setLoading] = useState(false);
   
-
-  
-
-
-
-  /*return(
-    <React.StrictMode>
-      <StyledEngineProvider injectFirst>
-        <Demo />
-      </StyledEngineProvider>
-    </React.StrictMode>
-  )*/
-
-
-
   return (
     <div>
       <div className="search-field">
@@ -120,16 +106,25 @@ function App() {
               spacing={0}
               sx={{justifyContent: "center",}}>
               <Grid item>
-                <Box>
-                <h1>Moive not found</h1>
-                  <Skeleton width={300} height={300} />
+                <Box sx={{ width: widthRatio(windowSize.innerWidth)}}>
+                <ul>
+                  <h2>No result for {name}</h2>
+                  <h2>Search Help</h2>
+                  <li>Check your search for typos</li>
+                  <li>Use more generic search terms</li>
+                  <li>The movie you're searching for may be not on our site yet</li>
+                </ul>
+                  <Skeleton />
+                  <Skeleton animation="wave" />
+                  <Skeleton animation={false} />
+                
                 </Box>
               </Grid>    
             </Grid>
           </Paper> 
         </div> 
       ) : MovieInfo.Response === "True"? (
-        <div className='App'>
+        <div>
           {loading ? <React.StrictMode>
                       <StyledEngineProvider injectFirst>
                         <Demo />
@@ -279,6 +274,20 @@ function App() {
     } else if (width>=1024) {
       return 6;
     }}
+
+  // get number of image in the column depending on screen size
+  function widthRatio(width:any) {
+    if (width<320) {
+      return 0.9*windowSize.innerWidth;
+    } else if (width>=320&&width<=480) {
+      return 0.8*windowSize.innerWidth;
+    } else if (width>480&&width<=768) {
+      return 0.7*windowSize.innerWidth;
+    } else if (width>=768&&width<=1024) {
+      return 0.6*windowSize.innerWidth;
+    } else if (width>=1024) {
+      return 0.5*windowSize.innerWidth;
+    }}  
 
   // get image size  
   function imageSize(length:number,string:string) {
