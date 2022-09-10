@@ -19,6 +19,7 @@ function App() {
   const [MovieInfo, setMovieInfo] = useState<undefined | any>(undefined);
   const [page, setPage] = React.useState(1);
   const [pageResult, setSearchResult] = useState(1);
+  const [buttonNum, setButtonNum] = useState(0);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
     setSearchResult(value);
@@ -45,9 +46,11 @@ function App() {
     };
   }, []);
 
-  // keep track of select page
+  // keep track of select page 
   useEffect(() => {
-    search(page)
+    if (buttonNum>0) {
+      search(page)
+    }
   }, [pageResult]);
 
 
@@ -75,6 +78,8 @@ function App() {
          
           <Button
             onClick={() => {
+              // increment number of time button is used
+              setButtonNum(buttonNum+1)
               // movie name not entered
               if (movieName===''){ 
                 setName('')
@@ -97,7 +102,7 @@ function App() {
       </div>
       {MovieInfo === undefined? (
         <div></div>
-      ) : (MovieInfo.Response === "False") && (name!=='') ? (
+      ) : (MovieInfo.Response === "False") ? (
       <div>
           <Paper sx={{ backgroundColor: "#E0FFFF" }}>
             <Grid
