@@ -102,6 +102,12 @@ function App() {
       </div>
       {MovieInfo === undefined? (
         <div></div>
+      ) : loading===true? (
+        <React.StrictMode>
+          <StyledEngineProvider injectFirst>
+            <Demo />
+          </StyledEngineProvider>
+        </React.StrictMode>
       ) : (MovieInfo.Response === "False") ? (
       <div>
           <Paper sx={{ backgroundColor: "#E0FFFF" }}>
@@ -129,12 +135,7 @@ function App() {
           </Paper> 
         </div> 
       ) : MovieInfo.Response === "True"? (
-        <div>
-          {loading ? <React.StrictMode>
-                      <StyledEngineProvider injectFirst>
-                        <Demo />
-                      </StyledEngineProvider>
-                    </React.StrictMode>: 
+        <div> 
           <Paper sx={{ backgroundColor: "#191a1a" }}>
             <div
               className='App'
@@ -196,7 +197,6 @@ function App() {
               </Grid>
             </div>
           </Paper>
-          }
         </div>
       ):(
         <div></div>
@@ -206,19 +206,15 @@ function App() {
 
   
   async function search(page:any) {
+    // loading images
     setLoading(true)
-    console.log(name)
-    console.log(movieName)
-    console.log(MovieInfo)
-    console.log(page)
-    console.log(pageResult)
     console.log('loading')
+
     // get response for first time
     const res = await axios.
     get(Movie_BASE_URL + "/?s=" + movieName + "&apikey=" + key + "&page=" +page); 
     
     if (movieName===''){
-
     // check response 
     } else if (res.data.Response!=='True'){
       console.log('there was no search');
@@ -248,6 +244,7 @@ function App() {
       }
       setMovieInfo(res.data);
     }
+    // loading finished
     console.log('finish')
     setLoading(false)
 }  
@@ -280,7 +277,7 @@ function App() {
       return 6;
     }}
 
-  // get number of image in the column depending on screen size
+  // get width depeding on screen width
   function widthRatio(width:any) {
     if (width<320) {
       return 0.9*windowSize.innerWidth;
