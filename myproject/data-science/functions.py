@@ -99,7 +99,17 @@ def load_hyperParamSummary():
     # get parameters to correcting attribute
     for line in lines:
         if len(line)==2 and list(summary_dict.keys()).count(line[0])==1:
-            summary_dict[line[0]].append(line[1])
+            if line[0]=='Score':
+               summary_dict[line[0]].append(float(line[1]))
+            else:
+               summary_dict[line[0]].append(line[1])  
+    summary_dict['combined']=[]
+
+    # store combined form of parameter values only(exclude Score value)
+    for i in range(28):
+        summary_dict['combined'].append('{}\n{}\n{}\n{}'.format(
+            summary_dict['units'][i],summary_dict['dropout'][i],summary_dict['learning_rate'][i],summary_dict['tuner/epochs'][i]
+    ))           
 
     return summary_dict        
 
