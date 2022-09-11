@@ -48,7 +48,7 @@ def get_sample(labels,images,n):
 
     return data_labels,data_images
 
-def load_test_data(train='off'):
+def load_data(train='off'):
     assert train=='off' or train=='on','{} is invalid input. train can only take \'off\' or \'on\' as an input'.format(train)
     folder='cifar-10-batches\\' # folder name that contains cifar-10 files
 
@@ -90,9 +90,9 @@ def load_test_data(train='off'):
     test_labels,test_images=get_sample(np.array(test['labels']),test['data'],8000)
 
     if train == 'on':
-        return test_labels,test_images,train_labels,train_images
+        return label_names,test_labels,test_images,train_labels,train_images
     else:
-        return test_labels,test_images
+        return label_names,test_labels,test_images
 
 
 def model_builder(hp):
