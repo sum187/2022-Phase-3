@@ -48,7 +48,7 @@ def get_sample(labels,images,n):
 
     return data_labels,data_images
 
-def load_data(train='off'):
+def load_image_data(train='off'):
     assert train=='off' or train=='on','{} is invalid input. train can only take \'off\' or \'on\' as an input'.format(train)
     folder='cifar-10-batches\\' # folder name that contains cifar-10 files
 
