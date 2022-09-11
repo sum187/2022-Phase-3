@@ -48,6 +48,53 @@ def get_sample(labels,images,n):
 
     return data_labels,data_images
 
+def load_test_data(train='off'):
+    assert train=='off' or train=='on','{} is invalid input. train can only take \'off\' or \'on\' as an input'.format(train)
+    folder='cifar-10-batches\\' # folder name that contains cifar-10 files
+
+    # training,test and name variables 
+    train_batch1=unpickle(folder+'data_batch_1')
+    test=unpickle(folder+'test_batch')
+    label_names=unpickle(folder+'batches.meta')['label_names']
+
+    # store training batches (1 to 5) in one variable
+    # reshape rgb data 2d (nx3072) array to 4d (nx32x32x3) for both test and training data
+    train_batches=[]
+    for num in range(1,6):
+        # reshape to have colour channel at last dimension
+        dict=unpickle(folder+'data_batch_'+str(num))
+        dict['data']=np.reshape(dict['data'],(10000,3,32,32))   
+        dict['data']=np.transpose(dict['data'],[0,2,3,1])
+
+        # remove keys that is unnecessary in this analysis
+        dict.pop('batch_label')
+        dict.pop('filenames')
+        train_batches.append(dict)
+        
+    # remove keys that is unnecessary in this analysis
+    test.pop('batch_label')
+    test.pop('filenames')
+    test['data']=np.reshape(test['data'],(10000,3,32,32))  
+    test['data']=np.transpose(test['data'],[0,2,3,1])
+
+    # split training batches to label and image batches
+    train_images_batches = [train['data'] for train in train_batches]
+    train_labels_batches = np.array([train['labels'] for train in train_batches])
+    
+    # combine batches to one batch
+    train_labels_combined=np.reshape(train_labels_batches,(50000))
+    train_images_combined=np.reshape(train_images_batches,(50000,32,32,3))
+
+    # get 10000 training and 2000 test samples
+    train_labels,train_images=get_sample(train_labels_combined,train_images_combined,40000)
+    test_labels,test_images=get_sample(np.array(test['labels']),test['data'],8000)
+
+    if train == 'on':
+        return test_labels,test_images,train_labels,train_images
+    else:
+        return test_labels,test_images
+
+
 def model_builder(hp):
   # Choose an optimal unit value between 64-256 dropout value 0.05-0.15
   hp_units = hp.Int('units', min_value=64, max_value=256, step=32)
@@ -113,7 +160,12 @@ def load_hyperParamSummary():
 
     return summary_dict        
 
-def predict(model,image,label):
+def predict(image,label,value='off'):
+    # raise error
+    assert value=='off' or value=='on', 'value must be either \'on\' or \'off\' but {} was given'.format(value)
+    
+    # load model
+    model = tf.keras.models.load_model('output\my_model')
     names=['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck']
     # convert to np array
     image=np.array(image)
@@ -136,8 +188,13 @@ def predict(model,image,label):
 
         pred_label=int(best_pred_label==idx)
         pred_percentage=100 * score.numpy()[idx]
-
-        return pred_label,pred_percentage
+        best_pred_percentage=100 * score.numpy()[best_pred_label]
+        bestScoreLabelName=names[best_pred_label]
+        
+        if value=='on':
+            return pred_label,pred_percentage,bestScoreLabelName,best_pred_percentage
+        elif value=='off':
+            return pred_label,pred_percentage    
 
     # for multiple images    
     else:
