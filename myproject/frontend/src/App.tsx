@@ -11,9 +11,9 @@ import Demo from './loading';
 import { StyledEngineProvider } from '@mui/material/styles';
 
 function App() {
-  const [movieName, setMovieName] = useState<undefined | any>(undefined);
-  const [name, setName] = useState<undefined | any>(undefined);
-  const [MovieInfo, setMovieInfo] = useState<undefined | any>(undefined);
+  const [movieName, setMovieName] = useState<undefined | any>('');
+  const [name, setName] = useState<undefined | any>('');
+  const [MovieInfo, setMovieInfo] = useState<undefined | any>('');
   const [page, setPage] = React.useState(1);
   const [pageResult, setSearchResult] = useState(1);
   const [buttonNum, setButtonNum] = useState(0);
@@ -145,8 +145,8 @@ function App() {
             >
               <Paper sx={{ backgroundColor: "#030303" }}>
                 <ImageList variant="standard" cols={getColumn(windowSize.innerWidth)} gap={12}>
-                  {MovieInfo.Search.map((search:any) => (       
-                    <ImageListItem >
+                  {MovieInfo.Search.map((search:any,i:any) => (       
+                    <ImageListItem key={i}>
                       <img
                         src={`${validLink(search.Poster)}?w=248&fit=crop&auto=format`}
                         srcSet={`${validLink(search.Poster)}?w=248&fit=crop&auto=format&dpr=2 2x`}

@@ -1,0 +1,288 @@
+Trial summary
+Hyperparameters:
+units: 192
+dropout: 0.15
+learning_rate: 0.001
+tuner/epochs: 25
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.7122499942779541
+Trial summary
+Hyperparameters:
+units: 256
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 25
+tuner/initial_epoch: 9
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 0012
+Score: 0.6959999799728394
+Trial summary
+Hyperparameters:
+units: 160
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 25
+tuner/initial_epoch: 9
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 0014
+Score: 0.6937500238418579
+Trial summary
+Hyperparameters:
+units: 192
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 25
+tuner/initial_epoch: 9
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 0022
+Score: 0.6868749856948853
+Trial summary
+Hyperparameters:
+units: 64
+dropout: 0.15
+learning_rate: 0.001
+tuner/epochs: 25
+tuner/initial_epoch: 9
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 0021
+Score: 0.6836249828338623
+Trial summary
+Hyperparameters:
+units: 192
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 9
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.6757500171661377
+Trial summary
+Hyperparameters:
+units: 160
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 9
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 0004
+Score: 0.6633750200271606
+Trial summary
+Hyperparameters:
+units: 64
+dropout: 0.15
+learning_rate: 0.001
+tuner/epochs: 9
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.6556249856948853
+Trial summary
+Hyperparameters:
+units: 256
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 9
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 0009
+Score: 0.6541249752044678
+Trial summary
+Hyperparameters:
+units: 96
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 9
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 0001
+Score: 0.6423749923706055
+Trial summary
+Hyperparameters:
+units: 128
+dropout: 0.15
+learning_rate: 0.001
+tuner/epochs: 9
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 0011
+Score: 0.6414999961853027
+Trial summary
+Hyperparameters:
+units: 160
+dropout: 0.1
+learning_rate: 0.0001
+tuner/epochs: 25
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.6309999823570251
+Trial summary
+Hyperparameters:
+units: 192
+dropout: 0.15
+learning_rate: 0.0001
+tuner/epochs: 25
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.624875009059906
+Trial summary
+Hyperparameters:
+units: 256
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.6188750267028809
+Trial summary
+Hyperparameters:
+units: 96
+dropout: 0.15
+learning_rate: 0.0001
+tuner/epochs: 25
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.6121249794960022
+Trial summary
+Hyperparameters:
+units: 96
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.5945000052452087
+Trial summary
+Hyperparameters:
+units: 160
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.5898749828338623
+Trial summary
+Hyperparameters:
+units: 128
+dropout: 0.15
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.5861250162124634
+Trial summary
+Hyperparameters:
+units: 64
+dropout: 0.1
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.5651249885559082
+Trial summary
+Hyperparameters:
+units: 128
+dropout: 0.05
+learning_rate: 0.0001
+tuner/epochs: 9
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.5262500047683716
+Trial summary
+Hyperparameters:
+units: 96
+dropout: 0.1
+learning_rate: 0.0001
+tuner/epochs: 9
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.5201249718666077
+Trial summary
+Hyperparameters:
+units: 224
+dropout: 0.1
+learning_rate: 0.0001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.47075000405311584
+Trial summary
+Hyperparameters:
+units: 256
+dropout: 0.05
+learning_rate: 0.0001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.4648750126361847
+Trial summary
+Hyperparameters:
+units: 96
+dropout: 0.1
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.3856250047683716
+Trial summary
+Hyperparameters:
+units: 64
+dropout: 0.1
+learning_rate: 0.01
+tuner/epochs: 9
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.359499990940094
+Trial summary
+Hyperparameters:
+units: 192
+dropout: 0.1
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.10000000149011612
+Trial summary
+Hyperparameters:
+units: 192
+dropout: 0.05
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.10000000149011612
+Trial summary
+Hyperparameters:
+units: 160
+dropout: 0.05
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.10000000149011612
