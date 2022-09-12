@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import Input, layers, Sequential, optimizers, losses, callbacks
 import numpy as np
+import pickle
 
 # Assume tar.gz file to be extracted at project directory.
 def unpickle(file):
@@ -22,7 +23,7 @@ def unpickle(file):
         t (ndarray): independent variable values at which dependent variable(s) calculated.
         y (ndarray): dependent variable(s) solved at t values.
     """
-    import pickle
+    
     with open(file, 'rb') as fo:
         dict = pickle.load(fo, encoding='latin1')
     return dict
