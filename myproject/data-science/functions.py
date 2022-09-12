@@ -186,7 +186,7 @@ def load_hyperParamSummary():
     # initialise summary dictionary  
     summary_dict={'units':[],'dropout':[],'learning_rate':[],'tuner/epochs':[],'Score':[]}
     
-    # get parameters to correcting attribute
+    # tidy up parameters in the dictionary with corresponding key 
     for line in lines:
         if len(line)==2 and list(summary_dict.keys()).count(line[0])==1:
             if line[0]=='Score':
@@ -203,21 +203,22 @@ def load_hyperParamSummary():
 
     return summary_dict        
 
-def predict(image,label,value='off'):
+def predict(image,label='automobile',value='off'):
     """
-    # This function calculates the probability that there is chosen label in the images given. Additionally, this function
-      can return the label that is most likely in the image and its corresponding probability 
+    # This function calculates the probability that there is chosen label in the images given and the label is automobile by 
+    # defualt. Additionally, this function can return the label that is most likely in the image and its corresponding 
+    # probability 
 
     Args:
         image (ndarray): image or images to be examined
-        label (list): label or labels of given image
-        value (string): set to 'on' to return more results
+        label (list): label or labels of given image ('automobile' by default)
+        value (string): set to 'on' to return more results ('off' by default)
 
     Returns:
         pred_label (ndarray): 1 if chosen label is detected, 0 otherwise
         pred_percentage (ndarray): probability/probabilities that there is chosen label in the image(s)
-        bestScoreLabelName (ndarray): label that is most likely in the image (only return for on image input)
-        best_pred_percentage (ndarray): corresponding probability to above (only return for on image input)
+        bestScoreLabelName (ndarray): label that is most likely in the image (only return for on image input when value='on')
+        best_pred_percentage (ndarray): corresponding probability to above (only return for on image input when value='on')
     """
     # raise error
     assert value=='off' or value=='on', 'value must be either \'on\' or \'off\' but {} was given'.format(value)
