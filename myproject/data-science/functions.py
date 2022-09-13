@@ -121,7 +121,7 @@ def load_image_data(train='off'):
         return label_names,test_labels,test_images
 
 
-def model_builder(hp):
+def model_builder(hp,value=10):
   """
     # This function return model that is able to detect chosen label in the images
 
@@ -159,7 +159,7 @@ def model_builder(hp):
 
     # Tune the number of units in the first Dense layer
     tf.keras.layers.Dense(units=hp_units, activation='relu'),
-    tf.keras.layers.Dense(10),])
+    tf.keras.layers.Dense(value),])
   
   # Tune the learning rate for the optimizer
   # Choose an optimal value from 0.01, 0.001, or 0.0001
@@ -206,19 +206,17 @@ def load_hyperParamSummary():
 def predict(image,label='automobile',value='off'):
     """
     # This function calculates the probability that there is chosen label in the images given and the label is automobile by 
-    # defualt. Additionally, this function can return the label that is most likely in the image and its corresponding 
-    # probability 
+    # defualt. Additionally, this function can return the probability of each label matches with chosen label for image.
 
     Args:
         image (ndarray): image or images to be examined
         label (list): label or labels of given image ('automobile' by default)
-        value (string): set to 'on' to return more results ('off' by default)
+        value (string): set to 'on' to return probability for all label ('off' by default)
 
-    Returns:
-        pred_label (ndarray): 1 if chosen label is detected, 0 otherwise
-        pred_percentage (ndarray): probability/probabilities that there is chosen label in the image(s)
-        bestScoreLabelName (ndarray): label that is most likely in the image (only return for on image input when value='on')
-        best_pred_percentage (ndarray): corresponding probability to above (only return for on image input when value='on')
+    Returns:  ###(single image/multiple images)####
+        pred_label      (int/list): 1 if chosen label is detected, 0 otherwise
+        pred_percentage (float/list): probability/probabilities that there is chosen label in the image(s)
+        score/score_list(list/2D list) : if value='on' return probability of each label matches with chosen label for image/images
     """
     # raise error
     assert value=='off' or value=='on', 'value must be either \'on\' or \'off\' but {} was given'.format(value)
@@ -239,19 +237,17 @@ def predict(image,label='automobile',value='off'):
         predictions=model.predict(tf.expand_dims(augmented_image[0], 0),verbose=0)
 
         # calculate probability
-        score = tf.nn.softmax(predictions[0])
+        scores = tf.nn.softmax(predictions[0]).numpy()
 
         # find index of label of interest and label that gives best prediction
         idx=names.index(label)
-        best_pred_label=np.argmax(score)
-
-        pred_label=int(best_pred_label==idx)
-        pred_percentage=100 * score.numpy()[idx]
-        best_pred_percentage=100 * score.numpy()[best_pred_label]
-        bestScoreLabelName=names[best_pred_label]
+        best_pred_label=np.argmax(scores)
+        
+        pred_label=int(best_pred_label==idx) # 1 if chosen label matches, 0 otherwise
+        pred_percentage=100 * scores[idx] # probability of above result
         
         if value=='on':
-            return pred_label,pred_percentage,bestScoreLabelName,best_pred_percentage
+            return pred_label,pred_percentage,scores
         elif value=='off':
             return pred_label,pred_percentage    
 
@@ -260,6 +256,7 @@ def predict(image,label='automobile',value='off'):
         # initialise
         pred_label=[]
         pred_percentage=[]
+        scores=[]
 
         # resize image before passing it through the model
         resize_and_rescale = tf.keras.Sequential([layers.Resizing(32, 32),])
@@ -270,7 +267,8 @@ def predict(image,label='automobile',value='off'):
         
         for p in predictions:
             # calculate probability on each class
-            score = tf.nn.softmax(p)
+            score = tf.nn.softmax(p).numpy()
+            scores.append(score)
 
             # find index of label of interest and label that gives best prediction
             idx=names.index(label)
@@ -278,6 +276,10 @@ def predict(image,label='automobile',value='off'):
             
             # append the result
             pred_label.append(int(best_pred_label==idx)) # check best predicted class matches to chosen class
-            pred_percentage.append(100 * score.numpy()[idx]) # confidence percent for chosen class
-
-        return pred_label,pred_percentage
+            pred_percentage.append(100 * score[idx]) # confidence percent for chosen class
+        scores=np.array(scores)    
+            
+        if value=='on':
+            return pred_label,pred_percentage,scores
+        elif value=='off':
+            return pred_label,pred_percentage 
