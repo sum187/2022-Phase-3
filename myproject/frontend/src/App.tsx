@@ -64,12 +64,11 @@ function App() {
             }}
             label="Enter the moive name..."
             sx={{
-              width: { xs: 150, sm: 200,md: 250, lg: 300, xl: 300 },
+              width: { xs: 100, sm: 200,md: 250, lg: 300, xl: 300 },
               "& .MuiInputBase-root": {
-                  height: 40
+                  height: { xs: 30, sm: 40,md: 40, lg: 40, xl: 50 }
               }
             }}
-            
             variant="outlined"
             placeholder="Search..."
             size="small"
