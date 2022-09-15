@@ -9,26 +9,17 @@ def unpickle(file):
     # This function returns specified number of samples from the data (with same number of each class)
 
     Args:
-        func (callable): derivative function that returns an ndarray of derivative values.
-        labels (ndarray): initial condition(s) for dependent variable(s).
-        t0 (float): start value of independent variable.
-        t1 (float):	stop value of independent variable.
-        h (float): fixed step size along independent variable.
-        alpha (ndarray): weights in the Butcher tableau.
-        beta (ndarray): nodes in the Butcher tableau.
-        gamma (ndarray): RK matrix in the Butcher tableau.
-        *args : optional system parameters to pass to derivative function.
+        file (zip file): zip file of CIFAR-10 dataset.
 
     Returns:
-        t (ndarray): independent variable values at which dependent variable(s) calculated.
-        y (ndarray): dependent variable(s) solved at t values.
+        dict (ndarray): returns images in dictionary format with labels and its name 
     """
     
     with open(file, 'rb') as fo:
         dict = pickle.load(fo, encoding='latin1')
     return dict
 
-def get_sample(labels,images,n):
+def get_sample(labels,images,n,test_set='off'):
     """
     # This function returns specified number of random samples from the data (with same number of each class)
 
@@ -36,29 +27,50 @@ def get_sample(labels,images,n):
         labels (ndarray): labels indicating corresponding images
         images (ndarray): images in any shape 
         n (float): desired number of samples
+        test_set (int/optional): number of left over data after sampling
 
     Returns:
         data_labels (ndarray): sample of label indexes for corresponding corresponding images
         data_images (ndarray): sample images in given shape
+        test_labels (ndarray): remaining labels that was not included in the sampling
+        test_images (ndarray): remaining images remaining labels that was not included in the sampling
     """
     # set sedd for consistency
     np.random.seed(123)
     data_images=[]
     data_labels=[]
+    test_images=[]
+    test_labels=[]
     for i in range(10):
-        idx=np.random.choice(np.where(labels==i)[0],int(n/10),replace=False)
-        idx.sort()
-        data_images.append(np.array(images)[idx])
-        data_labels.append(np.array(labels)[idx])
+        all_index=np.where(labels==i)[0]
+        chosen_index=np.random.choice(all_index,int(n/10),replace=False) # index of random choice
+        non_chosen_index=np.setxor1d(all_index, chosen_index)            # unchosen index
+        chosen_index.sort()
+        data_images.append(np.array(images)[chosen_index])
+        data_labels.append(np.array(labels)[chosen_index])
+        if test_set!='off':
+            test_images.append(np.array(images)[non_chosen_index])
+            test_labels.append(np.array(labels)[non_chosen_index])
+
     data_images=np.reshape(data_images,(n,32,32,3))    
     data_labels=np.reshape(data_labels,(n))
-    # shufftle the data
+    if test_set!='off':
+        test_images=np.reshape(test_images,(test_set,32,32,3))    
+        test_labels=np.reshape(test_labels,(test_set))
+    # shufftle the data with setting same seed on each shuffle to maintain same shuffle
     np.random.seed(123)  
     np.random.shuffle(data_labels)  
     np.random.seed(123)  
     np.random.shuffle(data_images)
-
-    return data_labels,data_images
+    
+    if test_set!='off':
+        np.random.seed(123)  
+        np.random.shuffle(test_images)  
+        np.random.seed(123)  
+        np.random.shuffle(test_labels)
+        return data_labels,data_images,test_labels,test_images
+    else:
+        return data_labels,data_images
 
 def load_image_data(train='off'):
     """
@@ -74,6 +86,8 @@ def load_image_data(train='off'):
         test_images (ndarray): testing images          ""   ""
         train_labels (ndarray): training labels        ""   ""
         train_images (ndarray): training images        ""   "" 
+        validation_labels (ndarray): training labels   ""   ""
+        validation_images (ndarray): training images   ""   "" 
     """
     assert train=='off' or train=='on','{} is invalid input. train can only take \'off\' or \'on\' as an input'.format(train)
     folder='cifar-10-batches\\' # folder name that contains cifar-10 files
@@ -111,14 +125,14 @@ def load_image_data(train='off'):
     train_labels_combined=np.reshape(train_labels_batches,(50000))
     train_images_combined=np.reshape(train_images_batches,(50000,32,32,3))
 
-    # get 10000 training and 2000 test samples
-    train_labels,train_images=get_sample(train_labels_combined,train_images_combined,40000)
-    test_labels,test_images=get_sample(np.array(test['labels']),test['data'],8000)
+    # get 40000 training and 8000 validation samples with reminder as test sample (10000)
+    train_labels,train_images,test_labels,test_images=get_sample(train_labels_combined,train_images_combined,40000,test_set=10000)
+    validation_labels,validation_images=get_sample(np.array(test['labels']),test['data'],8000)
 
     if train == 'on':
-        return label_names,test_labels,test_images,train_labels,train_images
+        return label_names,validation_labels,validation_images,test_labels,test_images,train_labels,train_images
     else:
-        return label_names,test_labels,test_images
+        return label_names,validation_labels,validation_images,test_labels,test_images
 
 
 def model_builder(hp,value=10):
@@ -203,15 +217,17 @@ def load_hyperParamSummary():
 
     return summary_dict        
 
-def predict(image,label='automobile',value='off'):
+def predict(image,label='automobile',value='off',weight=0):
     """
-    # This function calculates the probability that there is chosen label in the images given and the label is automobile by 
-    # defualt. Additionally, this function can return the probability of each label matches with chosen label for image.
+    # This function returns the probability that there is chosen label in the images given and a number, 1 is returned 
+    # if automobile is most likely in the image, 0 otherwise.. Additionally, this function can return the probability 
+    # of each label matches with chosen label for image. When jpg image should be inputted one at a time.
 
     Args:
-        image (ndarray): image or images to be examined
+        image (ndarray/jpg): image or images to be examined with consistent shape of image
         label (list): label or labels of given image ('automobile' by default)
         value (string): set to 'on' to return probability for all label ('off' by default)
+        weight (float): weight to determine the presence of automobile in the image (default value=0)
 
     Returns:  ###(single image/multiple images)####
         pred_label      (int/list): 1 if chosen label is detected, 0 otherwise
@@ -245,6 +261,10 @@ def predict(image,label='automobile',value='off'):
         
         pred_label=int(best_pred_label==idx) # 1 if chosen label matches, 0 otherwise
         pred_percentage=100 * scores[idx] # probability of above result
+
+        # apply weight
+        if pred_label==1 and pred_percentage<weight:
+            pred_label=0
         
         if value=='on':
             return pred_label,pred_percentage,scores
@@ -277,6 +297,11 @@ def predict(image,label='automobile',value='off'):
             # append the result
             pred_label.append(int(best_pred_label==idx)) # check best predicted class matches to chosen class
             pred_percentage.append(100 * score[idx]) # confidence percent for chosen class
+            
+            # apply weight
+            if pred_label[-1]==1 and pred_percentage[-1]<weight:
+                pred_label[-1]=0
+
         scores=np.array(scores)    
             
         if value=='on':
