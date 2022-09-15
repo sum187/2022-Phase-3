@@ -33,8 +33,8 @@ ul li{
 /*media queary for font size*/
 /*320px or less — anything with screen size smaller*/
 @media (max-width: 319px) {
-  h1 {font-size: 6vw;}
-  h2 {font-size: 6vw;}
+  h1 {font-size: 7vw;}
+  h2 {font-size: 7vw;}
 }
 /*320px — 480px: Mobile devices*/
 @media (min-width: 320px) and (max-width: 480px) {
