@@ -4,7 +4,7 @@ import {Grid, Paper,ImageList,ImageListItem,ImageListItemBar} from "@mui/materia
 function GoTopage({MovieInfo,col}:any) {
   /*link to noimage sign */
   const noImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"
-
+  
   return (
     <div> 
       <Paper sx={{ backgroundColor: "#191a1a" }}>

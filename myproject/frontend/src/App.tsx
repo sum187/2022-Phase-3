@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import Loading from './loading';
 import NoResult from './NoResultPage';
 import ImageListPage from './ImageListPage';
+import ImageSlider from './frontPageSlider';
 
 function App() {
   const [movieName, setMovieName] = useState<unknown | string>();
@@ -23,8 +24,8 @@ function App() {
   // url and key 
   const Movie_BASE_URL = "https://www.omdbapi.com";
   //const key = "938b78ef";
-  //const key = "8059c2e4";
-  const key = "52776e8"
+  const key = "8059c2e4";
+  //const key = "52776e8"
 
   //keep track of screen size
   const [windowSize, setWindowSize] = useState(getWindowSize());
@@ -74,8 +75,8 @@ function App() {
           <Button
             onClick={() => {
               // movie name not entered, do nothing
-              if (movieName===''){ 
-                
+              if (movieName===''){
+                <div></div>
               // new movie name is searched
               } else if (movieName!==name) {
                 search(movieName,page),
@@ -94,13 +95,16 @@ function App() {
         </div>
       </div>
       {MovieInfo === undefined? (
-        <div></div>
+        <ImageSlider 
+          width={widthRatio('width')} 
+          height={widthRatio('height')} 
+        />
       ) : loading===true? (
         <Loading />
       ) : MovieInfo.Response === "False" ? (
         <NoResult 
           name={name} 
-          width={widthRatio(windowSize.innerWidth)}
+          width={widthRatio('width')}
         />
       ) : MovieInfo.Response === "True"? (
         <><ImageListPage
@@ -193,18 +197,26 @@ function App() {
     }}
 
   // get width depeding on screen width
-  function widthRatio(width:any) {
+  function widthRatio(key:string) {
+    const width:number=windowSize.innerWidth
+    var value:number=0
     if (width<320) {
-      return 0.9*windowSize.innerWidth;
+      value= 0.9*windowSize.innerWidth;
     } else if (width>=320&&width<=480) {
-      return 0.8*windowSize.innerWidth;
+      value= 0.8*windowSize.innerWidth;
     } else if (width>480&&width<=768) {
-      return 0.7*windowSize.innerWidth;
+      value= 0.7*windowSize.innerWidth;
     } else if (width>=768&&width<=1024) {
-      return 0.6*windowSize.innerWidth;
+      value= 0.6*windowSize.innerWidth;
     } else if (width>=1024) {
-      return 0.5*windowSize.innerWidth;
-    }}  
+      value= 0.5*windowSize.innerWidth;
+    }
+    if (key=='width') {
+      return value;
+    } else if (key=='height') {
+      return value*1.4;
+    }
+  }  
 
     function fontSize() {
       const col=getColumn(window.innerWidth)
