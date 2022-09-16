@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import './App.css';
-import {Button,Grid,TextField,Typography} from "@mui/material";
+import {Button,Grid,Typography,TextField} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
@@ -11,11 +11,11 @@ import NoResult from './NoResultPage';
 import ImageListPage from './ImageListPage';
 
 function App() {
-  const [movieName, setMovieName] = useState<unknown | any>();
-  const [name, setName] = useState<unknown | any>();
+  const [movieName, setMovieName] = useState<unknown | string>();
+  const [name, setName] = useState<unknown | string>();
   const [MovieInfo, setMovieInfo] = useState<unknown | any>();
-  const [page, setPage] = React.useState<any>(1);
-  const [pageResult, setPageResult] = React.useState<any>(0);
+  const [page, setPage] = React.useState<number>(1);
+  const [pageResult, setPageResult] = React.useState<number>(0);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
     setPageResult(value);
@@ -41,11 +41,9 @@ function App() {
   // keep track of selected page 
   useEffect(() => {
     if (pageResult!=0) {
-      console.log(movieName)
       search(name,page)
     }
   }, [pageResult]);
-
 
   // loading while waiting for the result
   const [loading, setLoading] = useState(false);
@@ -63,21 +61,21 @@ function App() {
               setMovieName(prop.target.value);
             }}
             label="Enter the moive name..."
+            InputLabelProps={{style: {fontSize: fontSize()}}}
+            inputProps={{style: {fontSize: fontSize()}, sx: { height: { xs: 15, sm: 15,md: 25, lg: 30, xl: 40 }}}}
             sx={{
-              width: { xs: 100, sm: 200,md: 250, lg: 300, xl: 300 },
-              "& .MuiInputBase-root": {
-                  height: { xs: 30, sm: 40,md: 40, lg: 40, xl: 50 }
+              width: { xs: 140, sm: 140,md: 210, lg: 250, xl: 300 }
               }
-            }}
+            }
             variant="outlined"
             placeholder="Search..."
             size="small"
           />
           <Button
             onClick={() => {
-              // movie name not entered
+              // movie name not entered, do nothing
               if (movieName===''){ 
-                setName('')
+                
               // new movie name is searched
               } else if (movieName!==name) {
                 search(movieName,page),
@@ -108,9 +106,7 @@ function App() {
         <><ImageListPage
             MovieInfo={MovieInfo}
             col={getColumn(windowSize.innerWidth)}
-            width={imageSize(windowSize.innerWidth, 'width')}
-            height={imageSize(windowSize.innerWidth, 'height')}
-            page={page} />
+            />
             <Grid
               container
               direction="row"
@@ -122,7 +118,8 @@ function App() {
                   variant="outlined"
                   shape="rounded"
                   page={page}
-                  onChange={handleChange} />
+                  onChange={handleChange} 
+                  />
               </Stack>
             </Grid></>         
       ):(
@@ -209,15 +206,19 @@ function App() {
       return 0.5*windowSize.innerWidth;
     }}  
 
-  // get image size  
-  function imageSize(length:number,string:string) {
-    const col=getColumn(window.innerWidth)
-    if (col!==undefined&&string==='width'){
-      return length/col*0.7;
-    } else if (col!==undefined&&string==='height'){
-      return length/col*0.7*1.412
-    }
-  }
+    function fontSize() {
+      const col=getColumn(window.innerWidth)
+      if (col==1) {
+        return 10
+      } else if (col==2) {
+        return 10
+      } else if (col==3) {
+        return 17
+      } else if (col==5) {
+        return 20
+      } else if (col==6) {
+        return 25
+      }}  
 }
 
 export default App;

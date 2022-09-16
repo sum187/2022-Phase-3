@@ -1,9 +1,7 @@
 import * as React from 'react';
 import {Grid, Paper,ImageList,ImageListItem,ImageListItemBar} from "@mui/material";
-import IconButton from '@mui/material/IconButton';
-import InfoIcon from '@mui/icons-material/Info';
 
-function GoTopage({MovieInfo,col,width,height,page,values}:any) {
+function GoTopage({MovieInfo,col}:any) {
   /*link to noimage sign */
   const noImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"
 
@@ -24,15 +22,14 @@ function GoTopage({MovieInfo,col,width,height,page,values}:any) {
               {MovieInfo.Search.map((search:any,i:any) => (       
                 <ImageListItem key={i}>
                   <img
-                    src={`${validLink(search.Poster)}?w=248&fit=crop&auto=format`}
-                    srcSet={`${validLink(search.Poster)}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    src={`${validLink(search.Poster)}?w=140&h=200&fit=crop&auto=format&dpr=2`}
                     alt={search.Title}
-                    style={{ width: width,
-                        height: height}}
-                    loading="lazy"
                   />  
                   <ImageListItemBar 
                     title={search.Title} 
+                    sx={{
+                      fontSize: 50
+                    }}
                   />
                 </ImageListItem>
               ))}

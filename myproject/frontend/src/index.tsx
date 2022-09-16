@@ -3,9 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { createTheme, } from "@material-ui/core/styles";
 
-const theme = createTheme({
+import { ThemeOptions } from "@mui/material/styles/createTheme";
+import { CssBaseline } from "@mui/material";
+import { StyledEngineProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material";
+
+export const themeOptions: ThemeOptions = {
   breakpoints: {
     // Define custom breakpoint values.
     values: {
@@ -16,15 +20,22 @@ const theme = createTheme({
       xl: 1024
     }
   }
-});
+};
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
+  
   <React.StrictMode>
-    <App />
+    <CssBaseline />
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={createTheme(themeOptions)}>
+        <App />
+      </ThemeProvider>
+    </StyledEngineProvider>
   </React.StrictMode>
+
 );
 
 // If you want to start measuring performance in your app, pass a function
